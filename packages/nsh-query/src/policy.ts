@@ -51,7 +51,3 @@ export function keyStartsWith(key: QueryKey, prefix: QueryKey): boolean {
 export function isFresh(policy: CachePolicy, ageMs: number): boolean {
   return policy !== "none" && ageMs <= policy.ttlMs;
 }
-
-export function isStaleButServeable(policy: CachePolicy, ageMs: number): boolean {
-  return policy !== "none" && policy.staleMs !== undefined && ageMs > policy.ttlMs && ageMs <= policy.ttlMs + policy.staleMs;
-}
