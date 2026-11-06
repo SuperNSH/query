@@ -1,0 +1,16 @@
+[package]
+name = "nsh-query"
+description = "TanStack Query-style async state for Native Shell Rust apps, on the gpui-query core state machine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+gpui-query = { version = "0.3.1", default-features = false, features = ["core"] }
+nsh-core = "0.4.0"
+
+[dev-dependencies]
+nsh-engine = "0.4.0"
+nsh-testing = "0.4.0"

@@ -1,0 +1,12 @@
+{
+  "name": "nsh-query",
+  "version": "0.1.0",
+  "description": "TanStack Query-style async state for Native Shell TSX apps",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "files": ["src"],
+  "repository": "https://github.com/freeoxide/nsh-query"
+}
