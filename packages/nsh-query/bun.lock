@@ -1,0 +1,21 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "nsh-query",
+      "dependencies": {
+        "@tanstack/query-async-storage-persister": "5.107.1",
+        "@tanstack/query-core": "5.107.1",
+        "@tanstack/query-persist-client-core": "5.107.1",
+      },
+    },
+  },
+  "packages": {
+    "@tanstack/query-async-storage-persister": ["@tanstack/query-async-storage-persister@5.107.1", "", { "dependencies": { "@tanstack/query-core": "5.107.1", "@tanstack/query-persist-client-core": "5.107.1" } }, "sha512-yBUPWoe3mclko1NcjIXXeXyoO3oLwzgQaCppxK5KS73gTDA+bJtRJ1hIRHc5tKwMdD0ZDi9TzWqOCWnLsbrNDQ=="],
+
+    "@tanstack/query-core": ["@tanstack/query-core@5.107.1", "", {}, "sha512-PSyAik11oQBEVOiVy5hjZWHmoUqOXqK1WYy4v55mcxozEfKaQgpUMsgnXhWjuESzSht8JfzqMS1m6M/9CpNgvg=="],
+
+    "@tanstack/query-persist-client-core": ["@tanstack/query-persist-client-core@5.107.1", "", { "dependencies": { "@tanstack/query-core": "5.107.1" } }, "sha512-/qDxEcKh44xViKKFlf8MUoeITritIn58XcT3YkCOQ0Ovj4Wa2EgZtqvHSlw+tnQQGhtq9+gLVZSeUtSfkIL9Kg=="],
+  }
+}
