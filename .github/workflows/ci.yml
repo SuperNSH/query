@@ -52,6 +52,7 @@ jobs:
           version: v2.0.0
           cache-dir: ${{ runner.temp }}/kache
           manifest-key: rust-${{ matrix.os }}
+          cache-key-prefix: kache-rust-${{ matrix.os }}
           save-cache: ${{ github.ref == 'refs/heads/master' }}
           pr-comment: false
       - name: Install Linux packages

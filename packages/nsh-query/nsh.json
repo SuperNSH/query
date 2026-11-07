@@ -1,6 +1,6 @@
 {
   "name": "nsh-query tests",
-  "id": "dev.freeoxide.nsh-query",
+  "id": "dev.supernsh.query.demo",
   "version": "0.1.0",
   "build": 1,
   "capabilities": {
