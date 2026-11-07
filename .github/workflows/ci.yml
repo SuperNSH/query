@@ -1,0 +1,188 @@
+name: CI
+
+# Every compile and test runs here, on GitHub's runners, never on a developer's machine.
+# kache caches compiler outputs in GitHub's Actions cache; only master saves to it.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  LINUX_PACKAGES: dbus dbus-user-session gnome-keyring libgtk-4-dev libwebkitgtk-6.0-dev clang llvm
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  rust:
+    name: rust (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          components: clippy
+      - uses: kunobi-ninja/kache-action@ad7317540dcdd71c904f7a60a87b620a0c0e67ed # v1
+        with:
+          version: v2.0.0
+          cache-dir: ${{ runner.temp }}/kache
+          manifest-key: rust-${{ matrix.os }}
+          save-cache: ${{ github.ref == 'refs/heads/master' }}
+          pr-comment: false
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y $LINUX_PACKAGES
+      - run: cargo clippy -p nsh-query --all-targets --all-features -- -D warnings
+      - name: Test
+        if: runner.os != 'Linux'
+        run: cargo test -p nsh-query --all-features --no-fail-fast
+      - name: Test
+        if: runner.os == 'Linux'
+        run: cargo test -p nsh-query --all-features --no-fail-fast
+
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Install the package's dependencies
+        working-directory: packages/nsh-query
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Install NSH
+        if: runner.os != 'Windows'
+        env:
+          NSH_VERSION: 0.4.0
+        run: |
+          curl -fsSL https://nsh.dev/install.sh | sh
+          echo "$HOME/.nsh/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install NSH
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          NSH_VERSION: 0.4.0
+        run: |
+          irm https://nsh.dev/install.ps1 | iex
+          "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Check, build and test
+        working-directory: packages/nsh-query
+        run: |
+          nsh check
+          nsh build 2>&1 | tee build.log
+          ! grep -i warn build.log
+          nsh test
+
+  demo:
+    name: demo (${{ matrix.target }})
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [format, rust, typescript]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-latest, target: macos }
+          - { os: macos-latest, target: ios-simulator }
+          - { os: ubuntu-latest, target: linux }
+          - { os: ubuntu-latest, target: android }
+          - { os: ubuntu-latest, target: web }
+          - { os: windows-latest, target: windows }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y $LINUX_PACKAGES
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - name: Install the package's dependencies
+        working-directory: packages/nsh-query
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Install NSH
+        if: runner.os != 'Windows'
+        env:
+          NSH_VERSION: 0.4.0
+        run: |
+          curl -fsSL https://nsh.dev/install.sh | sh
+          echo "$HOME/.nsh/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install NSH
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          NSH_VERSION: 0.4.0
+        run: |
+          irm https://nsh.dev/install.ps1 | iex
+          "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Package
+        shell: bash
+        working-directory: packages/nsh-query
+        run: |
+          abi=""
+          [ "${{ matrix.target }}" = android ] && abi="--abi arm64-v8a"
+          nsh package App.tsx --target ${{ matrix.target }} $abi --app-version 0.1.0 --build ${{ github.run_number }} --out "$RUNNER_TEMP/out"
+      - name: Name the build
+        shell: bash
+        run: |
+          mkdir -p dist
+          cd "$RUNNER_TEMP/out"
+          name="query-demo-${{ matrix.target }}"
+          case "${{ matrix.target }}" in
+            android) cp ./*.apk "$GITHUB_WORKSPACE/dist/$name.apk" ;;
+            linux) cp ./*.tar.gz "$GITHUB_WORKSPACE/dist/$name.tar.gz" ;;
+            macos|ios-simulator) ditto -c -k --keepParent ./*.app "$GITHUB_WORKSPACE/dist/$name.zip" ;;
+            windows) 7z a "$GITHUB_WORKSPACE/dist/$name.zip" ./* > /dev/null ;;
+            web) tar -czf "$GITHUB_WORKSPACE/dist/$name.tar.gz" * ;;
+          esac
+          ls -la "$GITHUB_WORKSPACE/dist"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: demo-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: publish the latest build
+    needs: demo
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: publish-latest
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Replace the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh release delete latest --repo "$REPO" --cleanup-tag --yes || true
+          gh release create latest dist/* --repo "$REPO" --target "$GITHUB_SHA" --latest \
+            --title "Latest build" \
+            --notes "Demo builds from master at $GITHUB_SHA, replaced on every push to master. Unsigned: macOS and Windows will warn before opening them, and the iOS build runs only in the simulator."
