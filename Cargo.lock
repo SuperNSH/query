@@ -1010,6 +1010,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "gpui-query-http"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9159e4bcfe2c6d46186ff7a09195a6c885dc5ab13d678dacbfc271746be3eba7"
+dependencies = [
+ "bytes",
+ "gpui-query",
+ "http",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "group"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1564,10 +1577,14 @@ dependencies = [
 name = "nsh-query"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "gpui-query",
+ "gpui-query-http",
  "nsh-core",
  "nsh-engine",
  "nsh-testing",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

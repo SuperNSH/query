@@ -49,7 +49,7 @@ pub fn PagesApp() -> impl IntoElement {
         }))
         .child(text("next").on_press(move || pages.fetch_next_page()))
         .child(text("previous").on_press(move || pages.fetch_previous_page()))
-        .child(text("refetch").on_press(move || pages.refetch()))
+        .child(text("refetch").on_press(move || pages.reset()))
 }
 
 #[test]
