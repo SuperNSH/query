@@ -12,7 +12,7 @@
   "files": [
     "src"
   ],
-  "repository": "https://github.com/freeoxide/nsh-query",
+  "repository": "https://github.com/SuperNSH/nsh-query",
   "dependencies": {
     "@tanstack/query-async-storage-persister": "5.107.1",
     "@tanstack/query-core": "5.107.1",
