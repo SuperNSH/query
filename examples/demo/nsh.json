@@ -1,0 +1,7 @@
+{
+  "name": "Query demo",
+  "id": "dev.freeoxide.nsh-query.demo",
+  "version": "0.1.0",
+  "build": 1,
+  "capabilities": {}
+}
