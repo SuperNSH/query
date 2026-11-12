@@ -15,7 +15,7 @@ TSX runs on NSH's prebuilt runtime in QuickJS, and TanStack's JavaScript core ru
 
 A Rust app cannot run that core, so the crate ports its behavior. It builds on [`gpui-query`](https://github.com/freeoxide/gpui-query)'s `core` feature, a state machine with no GPUI dependency (`QueryResource`, `MutationResource`, `InfiniteQueryResource`, `CachePolicy`, `RetryPolicy`, `QueryKey`), and replaces its GPUI layers with NSH signals, tasks and timers.
 
-Requires NSH 0.4.0.
+Requires NSH 0.5.0.
 
 ## TypeScript
 

@@ -13,12 +13,12 @@ http-cache = ["dep:gpui-query-http"]
 
 [dependencies]
 gpui-query = { version = "0.3.1", default-features = false, features = ["core"] }
-nsh-core = "0.4.0"
+nsh-core = "0.5.0"
 serde = { version = "1", optional = true }
 serde_json = { version = "1", optional = true }
 gpui-query-http = { version = "0.1", optional = true }
 
 [dev-dependencies]
 bytes = "1"
-nsh-engine = "0.4.0"
-nsh-testing = "0.4.0"
+nsh-engine = "0.5.0"
+nsh-testing = "0.5.0"
