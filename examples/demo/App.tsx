@@ -1,23 +1,25 @@
 import { mount, signal, Text, View } from "nsh";
-import { createMutation, createQuery, queryClient } from "../../packages/nsh-query/src";
+import { createMutation, createQuery, QueryClient, QueryClientProvider } from "../../packages/nsh-query/src";
 
 /** Stands in for a server, so the demo needs no network. */
 let serverCount = 0;
 
-function App() {
-  const count = createQuery<{ n: number }>({
-    key: "count",
-    cache: { ttlMs: 60_000 },
-    fetch: async () => ({ n: serverCount }),
-  });
-  const increment = createMutation<void, { n: number }>({
-    invalidates: ["count"],
-    mutate: async () => ({ n: ++serverCount }),
-  });
+const client = new QueryClient();
+
+function Counter() {
+  const count = createQuery<{ n: number }>(() => ({
+    queryKey: ["count"],
+    queryFn: async () => ({ n: serverCount }),
+    staleTime: 60_000,
+  }));
+  const increment = createMutation<{ n: number }>(() => ({
+    mutationFn: async () => ({ n: ++serverCount }),
+    onSuccess: () => client.invalidateQueries({ queryKey: ["count"] }),
+  }));
   const reloads = signal(0);
   return (
     <View class="flex-1 gap-2 p-4">
-      <Text>{`count ${count.data()?.n ?? "loading"}`}</Text>
+      <Text>{`count ${count.data?.n ?? "loading"}`}</Text>
       <Text role="button" onPress={() => increment.mutate()}>
         Increment on the server
       </Text>
@@ -25,7 +27,7 @@ function App() {
         role="button"
         onPress={() => {
           reloads.set(reloads() + 1);
-          queryClient.invalidate("count");
+          void client.invalidateQueries({ queryKey: ["count"] });
         }}
       >
         {`Reload (${reloads()})`}
@@ -34,4 +36,8 @@ function App() {
   );
 }
 
-mount(App);
+mount(() => (
+  <QueryClientProvider client={client}>
+    <Counter />
+  </QueryClientProvider>
+));

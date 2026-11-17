@@ -122,6 +122,9 @@ jobs:
           nsh build 2>&1 | tee build.log
           ! grep -i warn build.log
           nsh test
+      - name: Check the demo
+        working-directory: examples/demo
+        run: nsh check
 
   demo:
     name: demo (${{ matrix.name }})
