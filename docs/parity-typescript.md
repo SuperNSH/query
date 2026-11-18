@@ -1,7 +1,7 @@
 # TypeScript parity: nsh-query on @tanstack/query-core
 
 Pinned: `@tanstack/query-core` 5.107.1, `@tanstack/query-persist-client-core` 5.107.1 and
-`@tanstack/query-async-storage-persister` 5.107.1, on `nsh` 0.4.0. The package is `packages/nsh-query`.
+`@tanstack/query-async-storage-persister` 5.107.1, on `nsh` 0.6.0. The package is `packages/nsh-query`.
 
 ## How to read this file
 
@@ -155,8 +155,8 @@ Changed to meet the standards, each with the test that fails if it regresses:
 |---|---|---|
 | `isServer` (the exported constant) reads `true`; the core's behaviour follows `environmentManager`, which says client | The constant reads `typeof window`, and NSH has no window. The package sets `environmentManager` so the core behaves as a client (decision 1). | T8 |
 | Focus counts `inactive` (visible without the focus) as focused | Matches query-core's own visibility check; NSH's docs say `inactive` is still visible (decision 2). | T69 |
-| Online is always true unless `onlineManager.setOnline(false)` is called | NSH 0.4.0 has no network status API. | T71 |
-| Suspense hooks and `suspense: true` throw `ERR_NSH_QUERY_NO_SUSPENSE` | NSH 0.4.0 has no Suspense boundary (see the not applicable rows). | T25 |
+| Online is always true unless `onlineManager.setOnline(false)` is called | NSH 0.6.0 has no network status API. | T71 |
+| Suspense hooks and `suspense: true` throw `ERR_NSH_QUERY_NO_SUSPENSE` | NSH 0.6.0 has no Suspense boundary (see the not applicable rows). | T25 |
 | `combine` presence is read once, when the hook is called | The list views are built for one shape. Changing it later would need a different component. | T36 |
 | The client is read once per component | The hooks read the client in the component body, as NSH expects; a new client needs a new component. | T40 |
 | Persistence is one JSON value, capped by NSH `Storage` at 5 MB | NSH `Storage` is key-value with a 5 MB limit; a larger save fails and `retry` decides. | T52 |
@@ -356,9 +356,9 @@ Types are compiled by `nsh check`, which type-checks the package and its tests. 
 | `usePrefetchQuery` | done | T30 | Starts `prefetchQuery` while shown. |
 | `usePrefetchInfiniteQuery` | done | T30 | Starts `prefetchInfiniteQuery` while shown. |
 | `HydrationBoundary` | done | T31 | Hydrates before the children render. |
-| `useSuspenseQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.4.0 does not have (its installed types export none; `resource()` is NSH's async value). Calling it throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
-| `useSuspenseInfiniteQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.4.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
-| `useSuspenseQueries` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.4.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have (its installed types export none; `resource()` is NSH's async value). Calling it throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseInfiniteQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseQueries` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
 | `useQueryDiagnostics` | done | T17 | Snapshot of queries and mutations; wakes only on change. |
 | `NshQueryError` | done | T9, T25 | Error with a stable `code`. |
 | `errorCodes` | done | T9, T25 | The codes `NshQueryError` carries. |
@@ -689,16 +689,16 @@ that exists only because of Rust is `not applicable`, and says what it depends o
 
 ## Verification log
 
-Run in `packages/nsh-query`, on the final code, with `nsh` 0.4.0 and `bun` 1.4.4.
+Run in `packages/nsh-query`, on the final code, with `nsh` 0.6.0 and `bun` 1.4.4. Re-run on 2026-11-19 after the move to NSH 0.6.0; `nsh.json` grants `statusBar` and `application` so the harness prints no capability warnings. The one `warn` left in `nsh test` output is the deliberate restore-failure test (T3).
 
 | Gate | Result |
 |---|---|
 | `nsh check` | exit 0 (no output) |
 | `nsh test` | `✓ 74 tests: 74 passed, 0 failed (4.2s)`, exit 0 |
-| `nsh build` | `✓ built App.tsx into .nsh/out (271.8 KB js, 551.7 KB bytecode, 98ms)`; 0 warning lines |
-| `nsh build --release` | `✓ built App.tsx into .nsh/out (83.4 KB js, 115.9 KB bytecode, 213ms)`; 0 warning lines. The release bundle is the test harness, with every screen |
+| `nsh build` | `✓ built App.tsx into .nsh/out (272.0 KB js, 551.8 KB bytecode, 21ms)`; 0 warning lines |
+| `nsh build --release` | `✓ built App.tsx into .nsh/out (83.6 KB js, 116.0 KB bytecode, 26ms)`; 0 warning lines. The release bundle is the test harness, with every screen |
 | `grep -rn "new Map\|setTimeout\|retryDelay(" src` | no matches |
-| `nsh test tests/smoke.test.tsx --target macos` | `✓ 1 test: 1 passed, 0 failed (913ms)`, exit 0 |
+| `nsh test tests/smoke.test.tsx --target macos` | `✓ 1 test: 1 passed, 0 failed (707ms)`, exit 0 |
 | Consumer project (linked package): `check` | exit 0 |
 | Consumer project: `build` | `✓ built App.tsx into .nsh/out (144.2 KB js, 234.7 KB bytecode, 16ms)`; 0 warning lines |
 | Consumer project: `test` | `✓ 1 test: 1 passed, 0 failed (24ms)` |

@@ -112,7 +112,7 @@ pub fn Todos() -> impl IntoElement {
 | `usePrefetchQuery`, `usePrefetchInfiniteQuery` | `use_prefetch_query`, `use_prefetch_infinite_query` | The same names |
 | Data for a debug panel (from `gpui-query`) | `diagnostics()`, `use_diagnostics()` | `useQueryDiagnostics()` |
 
-Focus means the app is visible, as in TanStack: `active` and `inactive` count as focused and `background` does not. Online is `true` until the app says otherwise, because NSH 0.4.0 has no network status API, so call `setOnline` or `set_online` yourself.
+Focus means the app is visible, as in TanStack: `active` and `inactive` count as focused and `background` does not. Online is `true` until the app says otherwise, because NSH 0.6.0 has no network status API, so call `setOnline` or `set_online` yourself.
 
 ## State
 
@@ -120,7 +120,7 @@ Both versions follow NSH's rule that only the bindings that read a changed value
 
 ## Where it differs from TanStack
 
-**TypeScript:** an `nsh-query` query is TanStack's own code, so its behavior is TanStack's. Results read as properties, and a binding on `query.data` reruns only when `data` changes. The Suspense hooks throw `ERR_NSH_QUERY_NO_SUSPENSE`, because NSH 0.4.0 has no Suspense boundary. `packages/nsh-query/README.md` lists the rest.
+**TypeScript:** an `nsh-query` query is TanStack's own code, so its behavior is TanStack's. Results read as properties, and a binding on `query.data` reruns only when `data` changes. The Suspense hooks throw `ERR_NSH_QUERY_NO_SUSPENSE`, because NSH 0.6.0 has no Suspense boundary. `packages/nsh-query/README.md` lists the rest.
 
 **Rust:** these are deliberate:
 

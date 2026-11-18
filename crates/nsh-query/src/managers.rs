@@ -31,7 +31,7 @@ impl FocusManager {
     }
 }
 
-/// TanStack's `onlineManager`. Online by default, since NSH 0.4.0 has no
+/// TanStack's `onlineManager`. Online by default, since NSH 0.6.0 has no
 /// network status API; an app reports offline with `set_online(false)`.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct OnlineManager;

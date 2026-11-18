@@ -120,9 +120,9 @@ mount(() => (
   (`src/nsh.ts`). Retries, garbage collection and refetch timers then behave as they do in a browser.
 - **Focus** follows NSH's lifecycle. `refetchOnWindowFocus` means "visible again". `inactive` (visible without
   input) counts as focused and `background` does not, matching core's own visibility check.
-- **Online** is always true unless the app calls `onlineManager.setOnline(false)`. NSH 0.4.0 reports no network
+- **Online** is always true unless the app calls `onlineManager.setOnline(false)`. NSH 0.6.0 reports no network
   status.
-- **Suspense** is not available. NSH 0.4.0 has no Suspense boundary, so `suspense: true` and the
+- **Suspense** is not available. NSH 0.6.0 has no Suspense boundary, so `suspense: true` and the
   `useSuspense*` hooks throw `NshQueryError` with the code `ERR_NSH_QUERY_NO_SUSPENSE`. Read `isPending` instead.
 - **Errors the adapter raises** are `NshQueryError` objects with a stable `code`, such as
   `ERR_NSH_QUERY_NO_CLIENT`. Match on `code`, not on the message.
