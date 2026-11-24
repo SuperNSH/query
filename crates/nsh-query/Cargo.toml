@@ -1,6 +1,8 @@
 [package]
 name = "nsh-query"
 description = "TanStack Query-style async state for Native Shell Rust apps, on the gpui-query core state machine"
+readme = "../../README.md"
+keywords = ["nsh", "query", "async", "cache", "state"]
 version.workspace = true
 edition.workspace = true
 license.workspace = true

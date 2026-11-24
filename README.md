@@ -9,6 +9,16 @@ There are two versions:
 | TypeScript package | `packages/nsh-query` | `@tanstack/query-core` 5.107.1, unchanged, with a thin NSH adapter | TSX apps, signed packages, anything with no Rust crate |
 | Rust crate | `crates/nsh-query` | A hand-written port of TanStack Query's behavior, in snake_case | Rust and Rust-with-TSX apps |
 
+## Install
+
+For Rust apps:
+
+```sh
+cargo add nsh-query
+```
+
+The TypeScript package is not on npm. Link it as shown under [TypeScript](#typescript).
+
 ## Why two versions
 
 TSX runs on NSH's prebuilt runtime in QuickJS, and TanStack's JavaScript core runs there unmodified. The TypeScript package adds only what NSH needs: result objects that read as signals, NSH's lifecycle for focus, its batching for notifications, and its async `Storage` for persistence.
@@ -66,7 +76,7 @@ mount(() => (
 
 ```toml
 [dependencies]
-nsh-query = { path = "../nsh-query/crates/nsh-query" }
+nsh-query = "0.1"
 ```
 
 ```rust
