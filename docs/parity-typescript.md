@@ -155,8 +155,8 @@ Changed to meet the standards, each with the test that fails if it regresses:
 |---|---|---|
 | `isServer` (the exported constant) reads `true`; the core's behaviour follows `environmentManager`, which says client | The constant reads `typeof window`, and NSH has no window. The package sets `environmentManager` so the core behaves as a client (decision 1). | T8 |
 | Focus counts `inactive` (visible without the focus) as focused | Matches query-core's own visibility check; NSH's docs say `inactive` is still visible (decision 2). | T69 |
-| Online is always true unless `onlineManager.setOnline(false)` is called | NSH 0.6.0 has no network status API. | T71 |
-| Suspense hooks and `suspense: true` throw `ERR_NSH_QUERY_NO_SUSPENSE` | NSH 0.6.0 has no Suspense boundary (see the not applicable rows). | T25 |
+| Online is always true unless `onlineManager.setOnline(false)` is called | NSH 0.7.1 has a network status API (`network().online`) that this package does not read yet. | T71 |
+| Suspense hooks and `suspense: true` throw `ERR_NSH_QUERY_NO_SUSPENSE` | NSH 0.7.1 has no Suspense boundary (see the not applicable rows). | T25 |
 | `combine` presence is read once, when the hook is called | The list views are built for one shape. Changing it later would need a different component. | T36 |
 | The client is read once per component | The hooks read the client in the component body, as NSH expects; a new client needs a new component. | T40 |
 | Persistence is one JSON value, capped by NSH `Storage` at 5 MB | NSH `Storage` is key-value with a 5 MB limit; a larger save fails and `retry` decides. | T52 |
@@ -356,9 +356,9 @@ Types are compiled by `nsh check`, which type-checks the package and its tests. 
 | `usePrefetchQuery` | done | T30 | Starts `prefetchQuery` while shown. |
 | `usePrefetchInfiniteQuery` | done | T30 | Starts `prefetchInfiniteQuery` while shown. |
 | `HydrationBoundary` | done | T31 | Hydrates before the children render. |
-| `useSuspenseQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have (its installed types export none; `resource()` is NSH's async value). Calling it throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
-| `useSuspenseInfiniteQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
-| `useSuspenseQueries` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.6.0 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.7.1 does not have (its installed types export none; `resource()` is NSH's async value). Calling it throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseInfiniteQuery` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.7.1 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
+| `useSuspenseQueries` | not applicable | T26 | Depends on a Suspense boundary, which NSH 0.7.1 does not have. Throws `ERR_NSH_QUERY_NO_SUSPENSE`. |
 | `useQueryDiagnostics` | done | T17 | Snapshot of queries and mutations; wakes only on change. |
 | `NshQueryError` | done | T9, T25 | Error with a stable `code`. |
 | `errorCodes` | done | T9, T25 | The codes `NshQueryError` carries. |

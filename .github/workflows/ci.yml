@@ -113,7 +113,7 @@ jobs:
       - name: Install NSH
         if: runner.os != 'Windows'
         env:
-          NSH_VERSION: v0.6.0
+          NSH_VERSION: v0.7.1
         run: |
           curl -fsSL https://raw.githubusercontent.com/SuperNSH/nsh-builds/master/install.sh | sh
           echo "$HOME/.nsh/bin" >> "$GITHUB_PATH"
@@ -122,7 +122,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         env:
-          NSH_VERSION: v0.6.0
+          NSH_VERSION: v0.7.1
         run: |
           irm https://raw.githubusercontent.com/SuperNSH/nsh-builds/master/install.ps1 | iex
           "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
@@ -171,7 +171,7 @@ jobs:
       - name: Install NSH
         if: runner.os != 'Windows'
         env:
-          NSH_VERSION: v0.6.0
+          NSH_VERSION: v0.7.1
         run: |
           curl -fsSL https://raw.githubusercontent.com/SuperNSH/nsh-builds/master/install.sh | sh
           echo "$HOME/.nsh/bin" >> "$GITHUB_PATH"
@@ -180,7 +180,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         env:
-          NSH_VERSION: v0.6.0
+          NSH_VERSION: v0.7.1
         run: |
           irm https://raw.githubusercontent.com/SuperNSH/nsh-builds/master/install.ps1 | iex
           "$env:LOCALAPPDATA\nsh\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
